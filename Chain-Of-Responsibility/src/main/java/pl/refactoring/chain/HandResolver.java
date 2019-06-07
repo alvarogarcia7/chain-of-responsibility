@@ -97,23 +97,6 @@ public class HandResolver {
         return new Hand(HIGH_CARD, handCards);
     }
 
-    private Hand sameColor(List<Card> handCards) {
-        // Check for straight flush
-        Ordinals ordinals = new Ordinals(handCards).invoke();
-        int firstOrdinal = ordinals.getFirstOrdinal();
-        int secondOrdinal = ordinals.getSecondOrdinal();
-        int thirdOrdinal = ordinals.getThirdOrdinal();
-        int fourthOrdinal = ordinals.getFourthOrdinal();
-        int fifthOrdinal = ordinals.getFifthOrdinal();
-
-        if (firstOrdinal + 1 == secondOrdinal
-                && secondOrdinal + 1 == thirdOrdinal
-                && thirdOrdinal + 1 == fourthOrdinal
-                && fourthOrdinal + 1 == fifthOrdinal)
-            return new Hand(STRAIGHT_FLUSH, handCards);
-        else
-            return new Hand(FLUSH, handCards);
-    }
 
     private class Ordinals {
         private List<Card> handCards;
