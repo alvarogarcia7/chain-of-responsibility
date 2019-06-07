@@ -7,6 +7,7 @@ import pl.refactoring.chain.card.SUIT;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.groupingBy;
 import static pl.refactoring.chain.RANKING.*;
@@ -28,7 +29,7 @@ public class HandResolver {
 
         // Figure our high card by same color
         SUIT colorCandidate = handCards.get(0).getSuit();
-        boolean allSameColor = handCards.stream()
+        boolean allSameColor = getStream(handCards)
                 .allMatch(card -> card.getSuit().equals(colorCandidate));
         if (allSameColor) {
             boolean isStraightFlush = isStraightFlush(handCards);
@@ -86,6 +87,10 @@ public class HandResolver {
         }
 
         return new Hand(HIGH_CARD, handCards);
+    }
+
+    private Stream<Card> getStream(List<Card> handCards) {
+        return handCards.stream();
     }
 
     private Hand getHand(List<Card> handCards) {
