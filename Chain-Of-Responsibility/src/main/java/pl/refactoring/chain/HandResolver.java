@@ -32,15 +32,23 @@ abstract class Handler {
     }
 }
 
+ class RealHandler {
+     private RANKING[] rankings;
+
+     Hand handle(CardSet cardSet) {
+         return null;
+     }
+
+     public RealHandler(RANKING... rankings) {
+
+         this.rankings = rankings;
+     }
+}
+
 public class HandResolver {
     public Hand hand(CardSet cardSet) {
 
-        Handler handler = new Handler(STRAIGHT_FLUSH, FLUSH, STRAIGHT){
-            @Override
-            Hand handle(CardSet cardSet) {
-                return null;
-            }
-        };
+        Handler handler = new RealHandler(STRAIGHT_FLUSH, FLUSH, STRAIGHT);
         return handler.handle(cardSet);
 
 
