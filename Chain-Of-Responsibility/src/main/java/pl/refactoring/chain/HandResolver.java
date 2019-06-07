@@ -4,9 +4,9 @@ import pl.refactoring.chain.card.Card;
 import pl.refactoring.chain.card.RANK;
 import pl.refactoring.chain.card.SUIT;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
 import static pl.refactoring.chain.RANKING.*;
@@ -32,11 +32,12 @@ public class HandResolver {
                 .allMatch(card -> card.getSuit().equals(colorCandidate));
         if (allSameColor){
             // Check for straight flush
-            int firstOrdinal = handCards.get(0).getRank().ordinal();
-            int secondOrdinal = handCards.get(1).getRank().ordinal();
-            int thirdOrdinal = handCards.get(2).getRank().ordinal();
-            int fourthOrdinal = handCards.get(3).getRank().ordinal();
-            int fifthOrdinal = handCards.get(4).getRank().ordinal();
+            Ordinals ordinals = new Ordinals(handCards).invoke();
+            int firstOrdinal = ordinals.getFirstOrdinal();
+            int secondOrdinal = ordinals.getSecondOrdinal();
+            int thirdOrdinal = ordinals.getThirdOrdinal();
+            int fourthOrdinal = ordinals.getFourthOrdinal();
+            int fifthOrdinal = ordinals.getFifthOrdinal();
 
             if (firstOrdinal + 1 == secondOrdinal
                     && secondOrdinal + 1 == thirdOrdinal
@@ -50,16 +51,15 @@ public class HandResolver {
             // Check for possible x of a kind
             Map<RANK, List<Card>> cardsByRank = handCards.stream().collect(groupingBy(Card::getRank));
 
-            List<RANK> ranks = cardsByRank.keySet()
-                    .stream()
-                    .collect(Collectors.toList());
+            List<RANK> ranks = new ArrayList<>(cardsByRank.keySet());
             if (ranks.size() == 5){
                 // Check for straight
-                int firstOrdinal = handCards.get(0).getRank().ordinal();
-                int secondOrdinal = handCards.get(1).getRank().ordinal();
-                int thirdOrdinal = handCards.get(2).getRank().ordinal();
-                int fourthOrdinal = handCards.get(3).getRank().ordinal();
-                int fifthOrdinal = handCards.get(4).getRank().ordinal();
+                Ordinals ordinals = new Ordinals(handCards).invoke();
+                int firstOrdinal = ordinals.getFirstOrdinal();
+                int secondOrdinal = ordinals.getSecondOrdinal();
+                int thirdOrdinal = ordinals.getThirdOrdinal();
+                int fourthOrdinal = ordinals.getFourthOrdinal();
+                int fifthOrdinal = ordinals.getFifthOrdinal();
 
                 if (firstOrdinal + 1 == secondOrdinal
                         && secondOrdinal + 1 == thirdOrdinal
@@ -96,5 +96,47 @@ public class HandResolver {
         }
 
         return new Hand(HIGH_CARD, handCards);
+    }
+
+    private class Ordinals {
+        private List<Card> handCards;
+        private int firstOrdinal;
+        private int secondOrdinal;
+        private int thirdOrdinal;
+        private int fourthOrdinal;
+        private int fifthOrdinal;
+
+        public Ordinals(List<Card> handCards) {
+            this.handCards = handCards;
+        }
+
+        public int getFirstOrdinal() {
+            return firstOrdinal;
+        }
+
+        public int getSecondOrdinal() {
+            return secondOrdinal;
+        }
+
+        public int getThirdOrdinal() {
+            return thirdOrdinal;
+        }
+
+        public int getFourthOrdinal() {
+            return fourthOrdinal;
+        }
+
+        public int getFifthOrdinal() {
+            return fifthOrdinal;
+        }
+
+        public Ordinals invoke() {
+            firstOrdinal = handCards.get(0).getRank().ordinal();
+            secondOrdinal = handCards.get(1).getRank().ordinal();
+            thirdOrdinal = handCards.get(2).getRank().ordinal();
+            fourthOrdinal = handCards.get(3).getRank().ordinal();
+            fifthOrdinal = handCards.get(4).getRank().ordinal();
+            return this;
+        }
     }
 }
