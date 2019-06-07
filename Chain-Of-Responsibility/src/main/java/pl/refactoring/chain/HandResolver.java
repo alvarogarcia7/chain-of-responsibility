@@ -32,23 +32,33 @@ abstract class Handler {
     }
 }
 
- class RealHandler {
+ class RealHandler extends Handler {
+     private final RANKING value;
+     private final RealHandler next;
      private RANKING[] rankings;
 
      Hand handle(CardSet cardSet) {
-         return null;
+         if (this.value.appliesTo(cardSet)) {
+             return this.value.result;
+         }
+         return this.next.handle(cardSet);
      }
 
      public RealHandler(RANKING... rankings) {
-
          this.rankings = rankings;
+         this.value = rankings[0];
+         try {
+             this.next = new RealHandler(rankings[1..N]);
+         } catch (Exception e) {
+             this.next = new NullObjectHandler();
+         }
      }
 }
 
 public class HandResolver {
     public Hand hand(CardSet cardSet) {
 
-        Handler handler = new RealHandler(STRAIGHT_FLUSH, FLUSH, STRAIGHT);
+        Handler handler = new RealHandler(STRAIGHT_FLUSH, FLUSH, STRAIGHT, HIGH_CARD);
         return handler.handle(cardSet);
 
 
@@ -65,7 +75,13 @@ public class HandResolver {
             return new Hand(FLUSH, handCards);
         }
 
+        // FEEDBACK
         //TODO AGB mirar que plugin es para los shortcuts! academy
+        // TODO llevar bien mirado el tema del wifi + cast
+        // TODO asientos mirando al frente
+        //TODO llevar más avanzado el código, para centrarnos en la parte interesante
+        //TODO ese refactor básico, es innecesario. quita tiempo de lo útil
+        //TODO llevar preparado para poder hacer el cambiazo si es necesario. en git con tags
         if (!allSameColor) {
             Map<RANK, List<Card>> cardsByRank = handCards.stream().collect(groupingBy(Card::getRank));
 
