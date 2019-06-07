@@ -32,7 +32,8 @@ public class HandResolver {
                 .allMatch(card -> card.getSuit().equals(colorCandidate));
         if (allSameColor) {
             return sameColor(handCards);
-        } else {
+        }
+        if (!allSameColor) {
             Hand x = notSameColor(handCards);
             if (x != null) return x;
         }
