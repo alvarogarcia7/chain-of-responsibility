@@ -90,8 +90,7 @@ public class HandResolver {
     }
 
     private boolean isFlush(List<Card> handCards) {
-        boolean allSameColor = getStream(handCards)
-                .allMatch(card -> card.getSuit().equals(handCards.get(0).getSuit()));
+        boolean allSameColor = getStream(handCards).allMatch(card -> card.getSuit().equals(handCards.get(0).getSuit()));
         return allSameColor && !isStraightFlush(handCards);
     }
 
