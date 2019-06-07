@@ -31,14 +31,13 @@ public class HandResolver {
         SUIT colorCandidate = handCards.get(0).getSuit();
         boolean allSameColor = getStream(handCards)
                 .allMatch(card -> card.getSuit().equals(colorCandidate));
-        if (allSameColor) {
-            boolean isStraightFlush = isStraightFlush(handCards);
-            if (isStraightFlush)
-                return new Hand(STRAIGHT_FLUSH, handCards);
-            else {
-                return getHand(handCards);
-            }
+        if (isStraightFlush(handCards)) {
+            return new Hand(STRAIGHT_FLUSH, handCards);
+        } else if (allSameColor && !isStraightFlush(handCards)) {
+            return getHand(handCards);
         }
+
+        //TODO AGB mirar que plugin es para los shortcuts! academy
         if (!allSameColor) {
             Map<RANK, List<Card>> cardsByRank = handCards.stream().collect(groupingBy(Card::getRank));
 
@@ -106,7 +105,10 @@ public class HandResolver {
         int fourthOrdinal = ordinals.getFourthOrdinal();
         int fifthOrdinal = ordinals.getFifthOrdinal();
 
-        return firstOrdinal + 1 == secondOrdinal
+        boolean allSameColor = getStream(handCards)
+                .allMatch(card -> card.getSuit().equals(handCards.get(0).getSuit()));
+
+        return allSameColor && firstOrdinal + 1 == secondOrdinal
                 && secondOrdinal + 1 == thirdOrdinal
                 && thirdOrdinal + 1 == fourthOrdinal
                 && fourthOrdinal + 1 == fifthOrdinal;
