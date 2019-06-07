@@ -34,7 +34,7 @@ public class HandResolver {
         if (isStraightFlush(handCards)) {
             return new Hand(STRAIGHT_FLUSH, handCards);
         }
-        if (allSameColor && !isStraightFlush(handCards)) {
+        if (isFlush(handCards, allSameColor)) {
             return new Hand(FLUSH, handCards);
         }
 
@@ -87,6 +87,10 @@ public class HandResolver {
         }
 
         return new Hand(HIGH_CARD, handCards);
+    }
+
+    private boolean isFlush(List<Card> handCards, boolean allSameColor) {
+        return allSameColor && !isStraightFlush(handCards);
     }
 
     private Stream<Card> getStream(List<Card> handCards) {
