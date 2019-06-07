@@ -34,7 +34,7 @@ public class HandResolver {
         if (isStraightFlush(handCards)) {
             return new Hand(STRAIGHT_FLUSH, handCards);
         } else if (allSameColor && !isStraightFlush(handCards)) {
-            return getHand(handCards);
+            return new Hand(FLUSH, handCards);
         }
 
         //TODO AGB mirar que plugin es para los shortcuts! academy
@@ -90,10 +90,6 @@ public class HandResolver {
 
     private Stream<Card> getStream(List<Card> handCards) {
         return handCards.stream();
-    }
-
-    private Hand getHand(List<Card> handCards) {
-        return new Hand(FLUSH, handCards);
     }
 
     private boolean isStraightFlush(List<Card> handCards) {
