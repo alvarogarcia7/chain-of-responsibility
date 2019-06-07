@@ -31,21 +31,12 @@ public class HandResolver {
         boolean allSameColor = handCards.stream()
                 .allMatch(card -> card.getSuit().equals(colorCandidate));
         if (allSameColor) {
-            // Check for straight flush
-            Ordinals ordinals = new Ordinals(handCards).invoke();
-            int firstOrdinal = ordinals.getFirstOrdinal();
-            int secondOrdinal = ordinals.getSecondOrdinal();
-            int thirdOrdinal = ordinals.getThirdOrdinal();
-            int fourthOrdinal = ordinals.getFourthOrdinal();
-            int fifthOrdinal = ordinals.getFifthOrdinal();
-
-            if (firstOrdinal + 1 == secondOrdinal
-                    && secondOrdinal + 1 == thirdOrdinal
-                    && thirdOrdinal + 1 == fourthOrdinal
-                    && fourthOrdinal + 1 == fifthOrdinal)
+            boolean isStraightFlush = isStraightFlush(handCards);
+            if (isStraightFlush)
                 return new Hand(STRAIGHT_FLUSH, handCards);
-            else
-                return new Hand(FLUSH, handCards);
+            else {
+                return getHand(handCards);
+            }
         }
         if (!allSameColor) {
             Map<RANK, List<Card>> cardsByRank = handCards.stream().collect(groupingBy(Card::getRank));
@@ -95,6 +86,25 @@ public class HandResolver {
         }
 
         return new Hand(HIGH_CARD, handCards);
+    }
+
+    private Hand getHand(List<Card> handCards) {
+        return new Hand(FLUSH, handCards);
+    }
+
+    private boolean isStraightFlush(List<Card> handCards) {
+        // Check for straight flush
+        Ordinals ordinals = new Ordinals(handCards).invoke();
+        int firstOrdinal = ordinals.getFirstOrdinal();
+        int secondOrdinal = ordinals.getSecondOrdinal();
+        int thirdOrdinal = ordinals.getThirdOrdinal();
+        int fourthOrdinal = ordinals.getFourthOrdinal();
+        int fifthOrdinal = ordinals.getFifthOrdinal();
+
+        return firstOrdinal + 1 == secondOrdinal
+                && secondOrdinal + 1 == thirdOrdinal
+                && thirdOrdinal + 1 == fourthOrdinal
+                && fourthOrdinal + 1 == fifthOrdinal;
     }
 
 
