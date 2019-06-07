@@ -24,12 +24,20 @@ import static pl.refactoring.chain.RANKING.*;
  * If willing to do so, please contact the author.
  */
 
-class Handler {
-    
+abstract class Handler {
+    abstract Hand handle(CardSet cardSet);
+    public Handler(HandEnum... hands){
+
+    }
 }
 
 public class HandResolver {
     public Hand hand(CardSet cardSet) {
+
+        Handler handler = new Handler(HandEnum.StraightFlush, HandEnum.Flush,HandEnum.Straight);
+        ret
+
+
         List<Card> handCards = cardSet.getSortedCards();
 
         // Figure our high card by same color
