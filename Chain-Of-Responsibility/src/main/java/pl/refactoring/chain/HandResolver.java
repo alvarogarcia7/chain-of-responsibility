@@ -33,7 +33,8 @@ public class HandResolver {
                 .allMatch(card -> card.getSuit().equals(colorCandidate));
         if (isStraightFlush(handCards)) {
             return new Hand(STRAIGHT_FLUSH, handCards);
-        } else if (allSameColor && !isStraightFlush(handCards)) {
+        }
+        if (allSameColor && !isStraightFlush(handCards)) {
             return new Hand(FLUSH, handCards);
         }
 
