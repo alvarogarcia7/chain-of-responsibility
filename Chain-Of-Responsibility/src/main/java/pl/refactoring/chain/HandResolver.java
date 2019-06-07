@@ -13,13 +13,13 @@ import static pl.refactoring.chain.RANKING.*;
 
 /**
  * Corypight (c) 2018 IT Train Wlodzimierz Krakowski (www.refactoring.pl)
- *
+ * <p>
  * This code is exclusive property of Wlodek Krakowski
  * for usage of attendees of trainings that are conducted by Wlodek Krakowski.
- *
+ * <p>
  * This code may not be copied or used without
  * written consent of IT Train Wlodzimierz Krakowski (www.refactoring.pl)
- *
+ * <p>
  * If willing to do so, please contact the author.
  */
 public class HandResolver {
@@ -30,8 +30,22 @@ public class HandResolver {
         SUIT colorCandidate = handCards.get(0).getSuit();
         boolean allSameColor = handCards.stream()
                 .allMatch(card -> card.getSuit().equals(colorCandidate));
-        if (allSameColor){
-            // Check for straight flush
+        if (allSameColor) {
+            return sameColor(handCards);
+        } else {
+            Hand x = notSameColor(handCards);
+            if (x != null) return x;
+        }
+
+        return new Hand(HIGH_CARD, handCards);
+    }
+
+    private Hand notSameColor(List<Card> handCards) {
+        Map<RANK, List<Card>> cardsByRank = handCards.stream().collect(groupingBy(Card::getRank));
+
+        List<RANK> ranks = new ArrayList<>(cardsByRank.keySet());
+        if (ranks.size() == 5) {
+            // Check for straight
             Ordinals ordinals = new Ordinals(handCards).invoke();
             int firstOrdinal = ordinals.getFirstOrdinal();
             int secondOrdinal = ordinals.getSecondOrdinal();
@@ -43,59 +57,53 @@ public class HandResolver {
                     && secondOrdinal + 1 == thirdOrdinal
                     && thirdOrdinal + 1 == fourthOrdinal
                     && fourthOrdinal + 1 == fifthOrdinal)
-                return new Hand(STRAIGHT_FLUSH, handCards);
-            else
-                return new Hand(FLUSH, handCards);
+                return new Hand(STRAIGHT, handCards);
         }
-        else{
-            // Check for possible x of a kind
-            Map<RANK, List<Card>> cardsByRank = handCards.stream().collect(groupingBy(Card::getRank));
-
-            List<RANK> ranks = new ArrayList<>(cardsByRank.keySet());
-            if (ranks.size() == 5){
-                // Check for straight
-                Ordinals ordinals = new Ordinals(handCards).invoke();
-                int firstOrdinal = ordinals.getFirstOrdinal();
-                int secondOrdinal = ordinals.getSecondOrdinal();
-                int thirdOrdinal = ordinals.getThirdOrdinal();
-                int fourthOrdinal = ordinals.getFourthOrdinal();
-                int fifthOrdinal = ordinals.getFifthOrdinal();
-
-                if (firstOrdinal + 1 == secondOrdinal
-                        && secondOrdinal + 1 == thirdOrdinal
-                        && thirdOrdinal + 1 == fourthOrdinal
-                        && fourthOrdinal + 1 == fifthOrdinal)
-                    return new Hand(STRAIGHT, handCards);
-            }
-            if (ranks.size() == 2){
-                // Look for four of a kind
-                if (cardsByRank.get(ranks.get(0)).size() == 4 ||
+        if (ranks.size() == 2) {
+            // Look for four of a kind
+            if (cardsByRank.get(ranks.get(0)).size() == 4 ||
                     cardsByRank.get(ranks.get(1)).size() == 4)
-                    return new Hand(FOUR_OF_A_KIND, handCards);
+                return new Hand(FOUR_OF_A_KIND, handCards);
                 // Look for full house
-                else {
-                    return new Hand(FULL_HOUSE, handCards);
-                }
-            } else if (ranks.size() == 3){
-                // Look for 3 of a kind
-                if (cardsByRank.get(ranks.get(0)).size() == 3 ||
-                        cardsByRank.get(ranks.get(1)).size() == 3 ||
-                        cardsByRank.get(ranks.get(2)).size() == 3)
-                    return new Hand(THREE_OF_A_KIND, handCards);
-
-                // Look for 2 pairs
-                if (cardsByRank.get(ranks.get(0)).size() == 1 ||
-                        cardsByRank.get(ranks.get(1)).size() == 1 ||
-                        cardsByRank.get(ranks.get(2)).size() == 1)
-                    return new Hand(TWO_PAIRS, handCards);
-            } else if (ranks.size() == 4){
-                return new Hand(ONE_PAIR, handCards);
-            } else {
-                return new Hand(HIGH_CARD, handCards);
+            else {
+                return new Hand(FULL_HOUSE, handCards);
             }
-        }
+        } else if (ranks.size() == 3) {
+            // Look for 3 of a kind
+            if (cardsByRank.get(ranks.get(0)).size() == 3 ||
+                    cardsByRank.get(ranks.get(1)).size() == 3 ||
+                    cardsByRank.get(ranks.get(2)).size() == 3)
+                return new Hand(THREE_OF_A_KIND, handCards);
 
-        return new Hand(HIGH_CARD, handCards);
+            // Look for 2 pairs
+            if (cardsByRank.get(ranks.get(0)).size() == 1 ||
+                    cardsByRank.get(ranks.get(1)).size() == 1 ||
+                    cardsByRank.get(ranks.get(2)).size() == 1)
+                return new Hand(TWO_PAIRS, handCards);
+        } else if (ranks.size() == 4) {
+            return new Hand(ONE_PAIR, handCards);
+        } else {
+            return new Hand(HIGH_CARD, handCards);
+        }
+        return null;
+    }
+
+    private Hand sameColor(List<Card> handCards) {
+        // Check for straight flush
+        Ordinals ordinals = new Ordinals(handCards).invoke();
+        int firstOrdinal = ordinals.getFirstOrdinal();
+        int secondOrdinal = ordinals.getSecondOrdinal();
+        int thirdOrdinal = ordinals.getThirdOrdinal();
+        int fourthOrdinal = ordinals.getFourthOrdinal();
+        int fifthOrdinal = ordinals.getFifthOrdinal();
+
+        if (firstOrdinal + 1 == secondOrdinal
+                && secondOrdinal + 1 == thirdOrdinal
+                && thirdOrdinal + 1 == fourthOrdinal
+                && fourthOrdinal + 1 == fifthOrdinal)
+            return new Hand(STRAIGHT_FLUSH, handCards);
+        else
+            return new Hand(FLUSH, handCards);
     }
 
     private class Ordinals {
