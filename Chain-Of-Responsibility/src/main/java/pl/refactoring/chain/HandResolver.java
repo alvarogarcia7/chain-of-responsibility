@@ -33,7 +33,7 @@ public class HandResolver {
         if (allSameColor) {
             return sameColor(handCards);
         }
-        if (!allSameColor) {
+        if(!allSameColor){
             Hand x = notSameColor(handCards);
             if (x != null) return x;
         }
