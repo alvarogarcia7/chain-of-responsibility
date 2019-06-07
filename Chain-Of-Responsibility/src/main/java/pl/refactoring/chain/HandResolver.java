@@ -26,7 +26,8 @@ import static pl.refactoring.chain.RANKING.*;
 
 abstract class Handler {
     abstract Hand handle(CardSet cardSet);
-    public Handler(HandEnum... hands){
+
+    public Handler(RANKING... rankings) {
 
     }
 }
@@ -34,8 +35,13 @@ abstract class Handler {
 public class HandResolver {
     public Hand hand(CardSet cardSet) {
 
-        Handler handler = new Handler(HandEnum.StraightFlush, HandEnum.Flush,HandEnum.Straight);
-        ret
+        Handler handler = new Handler(STRAIGHT_FLUSH, FLUSH, STRAIGHT){
+            @Override
+            Hand handle(CardSet cardSet) {
+                return null;
+            }
+        };
+        return handler.handle(cardSet);
 
 
         List<Card> handCards = cardSet.getSortedCards();
