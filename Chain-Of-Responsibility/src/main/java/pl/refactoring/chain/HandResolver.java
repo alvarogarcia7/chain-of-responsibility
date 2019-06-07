@@ -23,6 +23,11 @@ import static pl.refactoring.chain.RANKING.*;
  * <p>
  * If willing to do so, please contact the author.
  */
+
+class Handler {
+    
+}
+
 public class HandResolver {
     public Hand hand(CardSet cardSet) {
         List<Card> handCards = cardSet.getSortedCards();
